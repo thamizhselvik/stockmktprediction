@@ -1,0 +1,76 @@
+#Use Google Colab
+#1st step(import packages)
+!pip install yfinance
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.linear_model import LinearRegression
+
+import warnings
+warnings.filterwarnings("ignore")
+
+
+import yfinance as yf
+yf.pdr_override()
+
+#2nd step
+symbol = 'MSFT'
+start = '1986-03-13' 
+end = '2022-05-28'
+df = yf.download(symbol, start, end)
+df = df.reset_index()
+
+#3rd step
+df.head()
+
+#4th step
+df.tail()
+
+#5th step
+df.describe()
+
+#6th step
+df.plot.line(y="Close", use_index=True)
+
+#7th step
+plt.scatter(x = df.Date, y = df.Close)
+plt.xlabel("Trading days")
+plt.ylabel("Closing days")
+plt.title("Scatter Plot of Trading days vs Closing days")
+plt.show()
+
+#8th step
+X = df['Open']
+Y = df['Adj Close']
+
+#9th step
+X_train = df[df.columns[1:5]] # data_aal[['open', 'high', 'low', 'close']]
+Y_train = df['Adj Close']
+
+#10th step
+X_train = X_train.values[:-1]
+Y_train = Y_train.values[1:]
+
+#11th step
+lr = LinearRegression()
+
+#12th step
+lr.fit(X_train, Y_train)
+
+#13th step
+X_test = df[df.columns[1:5]].values[:-1]
+Y_test = df['Adj Close'].values[1:]
+
+#14th step
+lr.score(X_test, Y_test)
+
+#15th step
+lr.score(X_train, Y_train)
+
+#16th step
+opening_price = float(input('Open: '))
+high = float(input('High: '))
+low = float(input('Low: '))
+close = float(input('Close: '))
+print('My Prediction the opening price will be:', lr.predict([[opening_price, high, low, close]])[0])
